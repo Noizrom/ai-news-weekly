@@ -16,7 +16,7 @@ import requests
 
 def build_envelope(url: str) -> dict:
     p = urlparse(url)
-    if p.scheme != "https:" or not p.netloc:
+    if p.scheme != "https" or not p.netloc:
         raise ValueError(f"refusing to publish non-https URL: {p.scheme or 'no scheme'}")
     if p.username or p.password or "@" in p.netloc:
         raise ValueError("refusing to publish URL with embedded credentials")
