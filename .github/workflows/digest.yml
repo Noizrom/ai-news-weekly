@@ -1,0 +1,51 @@
+name: weekly-digest
+
+on:
+  schedule:
+    - cron: "0 1 * * 1" # Mondays 01:00 UTC = 09:00 Manila
+  workflow_dispatch: {}
+
+permissions:
+  contents: write # commit the digest markdown
+  pages: write # deploy the site
+  id-token: write # Pages deployment auth
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate digest and site
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python main.py
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Notify phone
+        env:
+          NTFY_SERVER: ${{ secrets.NTFY_PHONE_SERVER }}
+          NTFY_TOPIC: ${{ secrets.NTFY_PHONE_TOPIC }}
+        run: python notify.py "${{ steps.deployment.outputs.page_url }}"

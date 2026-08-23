@@ -1,0 +1,53 @@
+# Weekly window and source tuning
+window_days: 7
+max_items_per_source: 40
+
+# Hacker News (Algolia API) — stories from the last window matching these queries
+hn_min_points: 40
+hn_queries:
+  - "AI model"
+  - "LLM"
+  - "open weights"
+  - "language model"
+  - "Anthropic"
+  - "Claude"
+  - "DeepSeek"
+
+# Reddit communities (public JSON API)
+subreddits:
+  - LocalLLaMA
+reddit_min_score: 25
+
+# Official lab/product blogs (RSS/Atom). Entries that fail are logged and skipped,
+# so wrong/guess URLs here are safe — fix them anytime.
+feeds:
+  - {name: OpenAI,          url: "https://openai.com/news/rss.xml"}
+  - {name: Google DeepMind, url: "https://deepmind.google/blog/rss.xml"}
+  - {name: Hugging Face,    url: "https://huggingface.co/blog/feed.xml"}
+  - {name: Mistral AI,      url: "https://mistral.ai/rss.xml"}
+  - {name: Qwen,            url: "https://qwenlm.github.io/blog/index.xml"}
+
+# Community items (HN/Reddit) must contain at least one substring (case-insensitive)
+community_keyword_filter:
+  - llm
+  - model
+  - gpt
+  - gemini
+  - claude
+  - qwen
+  - deepseek
+  - weights
+  - benchmark
+  - inference
+  - agent
+  - rag
+
+ai:
+  enabled: true
+  # Tried in order on 429/quota errors
+  models: [gemini-2.5-flash-lite, gemini-2.0-flash, gemini-2.5-flash]
+  batch_size: 12
+  rate_limit_seconds: 4
+
+site:
+  title: "AI News Weekly"
